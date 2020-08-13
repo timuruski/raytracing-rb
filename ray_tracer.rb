@@ -37,7 +37,19 @@ def ppm(width, height)
   $stderr.print "\e[0;0H\e[KDone!\n"
 end
 
+def hit_sphere(center, radius, r)
+  oc = r.origin - center
+  a = Vec3.dot(r.direction, r.direction)
+  b = 2.0 * Vec3.dot(oc, r.direction)
+  c = Vec3.dot(oc, oc) - radius * radius
+  discriminant = b * b - 4 * a * c
+
+  discriminant > 0
+end
+
 def ray_color(r)
+  return Color.new(1.0, 0.0, 0.0) if hit_sphere(Point3.new(0,0,-1), 0.5, r)
+
   unit_direction = r.direction.unit
   t = 0.5 * (unit_direction.y + 1.0)
   (1.0 - t) * Color.new(1.0, 1.0, 1.0) + t * Color.new(0.5, 0.7, 1.0)

@@ -37,16 +37,18 @@ Vec3 = Struct.new(:x, :y, :z) do
     x**2 + y**2 + z**2
   end
 
-  def dot(other)
-    raise TypeError unless other.is_a? Vec3
-    (x * other.x) + (y * other.y) + (z * other.z)
+  def self.dot(u, v)
+    raise TypeError unless u.is_a?(Vec3) && v.is_a?(Vec3)
+
+    (u.x * v.x) + (u.y * v.y) + (u.z * v.z)
   end
 
-  def cross(other)
-    raise TypeError unless other.is_a? Vec3
-    self.class.new(y * other.z - z * other.y,
-             z * other.x - x * other.z,
-             x * other.y - y * other.x)
+  def self.cross(u, v)
+    raise TypeError unless u.is_a?(Vec3) && v.is_a?(Vec3)
+
+    new(u.y * v.z - u.z * v.y,
+        u.z * v.x - u.x * v.z,
+        u.x * v.y - u.y * v.x)
   end
 
   def unit
@@ -192,11 +194,15 @@ if $0 == __FILE__
       a = Vec3.new(1,2,3)
       b = Vec3.new(2,3,4)
 
-      assert_equal 20.0, a.dot(b)
-      assert_equal 20.0, b.dot(a)
+      assert_equal 20.0, Vec3.dot(a, b)
+      assert_equal 20.0, Vec3.dot(b, a)
 
       assert_raises(TypeError) do
-        a.dot(5.12)
+        Vec3.dot(a, 5.12)
+      end
+
+      assert_raises(TypeError) do
+        Vec3.dot(5.12, b)
       end
     end
 
@@ -204,11 +210,15 @@ if $0 == __FILE__
       a = Vec3.new(1,2,3)
       b = Vec3.new(2,3,4)
 
-      assert_equal Vec3.new(-1,2,-1), a.cross(b)
-      assert_equal Vec3.new(1,-2,1), b.cross(a)
+      assert_equal Vec3.new(-1,2,-1), Vec3.cross(a, b)
+      assert_equal Vec3.new(1,-2,1), Vec3.cross(b, a)
 
       assert_raises(TypeError) do
-        a.cross(1.333)
+        Vec3.cross(a, 1.333)
+      end
+
+      assert_raises(TypeError) do
+        Vec3.cross(1.333, b)
       end
     end
 
