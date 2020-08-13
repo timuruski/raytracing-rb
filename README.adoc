@@ -9,4 +9,4 @@ but since it only needs to grind out a single image, it should be tolerable.
 
 == Usage
 
-    $ ruby ppm.rb | tee image.ppm | imgcat
+    $ ruby ray_tracer.rb | tee pretty_picture.ppm | imgcat

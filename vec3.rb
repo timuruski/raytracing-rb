@@ -4,24 +4,24 @@ Vec3 = Struct.new(:x, :y, :z) do
   end
 
   def -@
-    Vec3.new(-x, -y, -z)
+    self.class.new(-x, -y, -z)
   end
 
   def +(other)
     raise TypeError unless other.is_a? Vec3
-    Vec3.new(x + other.x, y + other.y, z + other.z)
+    self.class.new(x + other.x, y + other.y, z + other.z)
   end
 
   def -(other)
     raise TypeError unless other.is_a? Vec3
-    Vec3.new(x - other.x, y - other.y, z - other.z)
+    self.class.new(x - other.x, y - other.y, z - other.z)
   end
 
   def *(t)
     if t.is_a? Vec3
-      Vec3.new(x * t.x, y * t.y, z * t.z)
+      self.class.new(x * t.x, y * t.y, z * t.z)
     else
-      Vec3.new(x * t, y * t, z * t)
+      self.class.new(x * t, y * t, z * t)
     end
   end
 
@@ -44,7 +44,7 @@ Vec3 = Struct.new(:x, :y, :z) do
 
   def cross(other)
     raise TypeError unless other.is_a? Vec3
-    Vec3.new(y * other.z - z * other.y,
+    self.class.new(y * other.z - z * other.y,
              z * other.x - x * other.z,
              x * other.y - y * other.x)
   end
@@ -60,6 +60,7 @@ end
 
 # Helpful aliases
 Point3 = Class.new(Vec3)
+
 Color = Class.new(Vec3) do
   def to_s
     r = (255.999 * x).to_i
