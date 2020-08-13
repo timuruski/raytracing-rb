@@ -60,7 +60,15 @@ end
 
 # Helpful aliases
 Point3 = Class.new(Vec3)
-Color = Class.new(Vec3)
+Color = Class.new(Vec3) do
+  def to_s
+    r = (255.999 * x).to_i
+    g = (255.999 * y).to_i
+    b = (255.999 * z).to_i
+
+    "#{r} #{g} #{b}"
+  end
+end
 
 # Commutative multiply and divide for sclars and vectors.
 module Vec3Math

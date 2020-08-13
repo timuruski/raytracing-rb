@@ -6,3 +6,7 @@ but since it only needs to grind out a single image, it should be tolerable.
 
 - https://raytracing.github.io/books/RayTracingInOneWeekend.html
 - https://pragprog.com/titles/jbtracer/
+
+== Usage
+
+    $ ruby ppm.rb | tee image.ppm | imgcat
