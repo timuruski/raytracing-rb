@@ -1,0 +1,8 @@
+= Raytracing in one Weekend in Ruby
+
+The plan is to work through this ray tracing exercise using Ruby. The guide suggests using C++
+for this, but I'm curious if Ruby is up to the task. I expect the renderer will be quite slow,
+but since it only needs to grind out a single image, it should be tolerable.
+
+https://raytracing.github.io/books/RayTracingInOneWeekend.html
+https://pragprog.com/titles/jbtracer/
