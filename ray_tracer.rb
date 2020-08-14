@@ -54,7 +54,7 @@ def ray_color(r, world, depth)
   rec = Hittable::HitRecord.new
   return Color.new(0,0,0) if depth <= 0
 
-  if world.hit(r, 0, Float::INFINITY, rec)
+  if world.hit(r, 0.001, Float::INFINITY, rec)
     target = rec.p + rec.normal + Vec3.random_in_unit_sphere
     0.5 * ray_color(Ray.new(rec.p, target - rec.p), world, depth - 1)
   else
