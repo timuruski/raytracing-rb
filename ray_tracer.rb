@@ -37,22 +37,30 @@ def ppm(width, height)
   $stderr.print "\e[0;0H\e[KDone!\n"
 end
 
-def hit_sphere(center, radius, r)
-  oc = r.origin - center
-  a = Vec3.dot(r.direction, r.direction)
-  b = 2.0 * Vec3.dot(oc, r.direction)
-  c = Vec3.dot(oc, oc) - radius * radius
-  discriminant = b * b - 4 * a * c
-
-  discriminant > 0
+def ray_color(r)
+  t = hit_sphere(Point3.new(0,0,-1), 0.5, r)
+  if t > 0.0
+    n = Vec3.unit(r.at(t) - Vec3.new(0,0,-1))
+    0.5 * Color.new(n.x + 1, n.y + 1, n.z + 1)
+  else
+    unit_direction = Vec3.unit(r.direction)
+    t = 0.5 * (unit_direction.y + 1.0)
+    (1.0 - t) * Color.new(1.0, 1.0, 1.0) + t * Color.new(0.5, 0.7, 1.0)
+  end
 end
 
-def ray_color(r)
-  return Color.new(1.0, 0.0, 0.0) if hit_sphere(Point3.new(0,0,-1), 0.5, r)
+def hit_sphere(center, radius, r)
+  oc = r.origin - center
+  a = r.direction.length_squared
+  half_b = Vec3.dot(oc, r.direction)
+  c = oc.length_squared - radius * radius
+  discriminant = half_b * half_b - a * c
 
-  unit_direction = r.direction.unit
-  t = 0.5 * (unit_direction.y + 1.0)
-  (1.0 - t) * Color.new(1.0, 1.0, 1.0) + t * Color.new(0.5, 0.7, 1.0)
+  if discriminant < 0
+    -1.0
+  else
+    (-half_b - Math.sqrt(discriminant)) / a
+  end
 end
 
 ppm(IMAGE_WIDTH, IMAGE_HEIGHT) do |i, j|

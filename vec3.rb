@@ -33,7 +33,7 @@ Vec3 = Struct.new(:x, :y, :z) do
     Math.sqrt(length_squared)
   end
 
-  private def length_squared
+  def length_squared
     x**2 + y**2 + z**2
   end
 
@@ -51,8 +51,8 @@ Vec3 = Struct.new(:x, :y, :z) do
         u.x * v.y - u.y * v.x)
   end
 
-  def unit
-    self / length
+  def self.unit(v)
+    v / v.length
   end
 
   def to_s
@@ -226,7 +226,7 @@ if $0 == __FILE__
       a = Vec3.new(1,2,3)
       len = a.length
 
-      assert_equal Vec3.new(1/len,2/len,3/len), a.unit
+      assert_equal Vec3.new(1/len,2/len,3/len), Vec3.unit(a)
     end
 
     def test_to_s
