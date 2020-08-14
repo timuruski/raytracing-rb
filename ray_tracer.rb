@@ -6,6 +6,7 @@ ASPECT_RATIO = 16.0 / 9.0
 IMAGE_WIDTH = 400
 IMAGE_HEIGHT = (IMAGE_WIDTH / ASPECT_RATIO).to_i
 SAMPLES_PER_PIXEL = 20 # 100 samples takes ~2 minutes
+MAX_DEPTH = 50
 
 at_exit do
   world = HittableList.new
@@ -20,7 +21,7 @@ at_exit do
       u = (i.to_f + rand) / (IMAGE_WIDTH - 1)
       v = (j.to_f + rand) / (IMAGE_HEIGHT - 1)
       r = camera.get_ray(u, v)
-      pixel_color += ray_color(r, world)
+      pixel_color += ray_color(r, world, MAX_DEPTH)
     end
 
     pixel_color.to_s(SAMPLES_PER_PIXEL)
@@ -48,10 +49,13 @@ def ppm(width, height)
   $stderr.print "\e[0;0H\e[KDone!\n"
 end
 
-def ray_color(r, world)
+def ray_color(r, world, depth)
   rec = Hittable::HitRecord.new
+  return Color.new(0,0,0) if depth <= 0
+
   if world.hit(r, 0, Float::INFINITY, rec)
-    0.5 * Color(rec.normal + Color.new(1,1,1))
+    target = rec.p + rec.normal + Vec3.random_in_unit_sphere
+    0.5 * ray_color(Ray.new(rec.p, target - rec.p), world, depth - 1)
   else
     unit_direction = Vec3.unit(r.direction)
     t = 0.5 * (unit_direction.y + 1.0)

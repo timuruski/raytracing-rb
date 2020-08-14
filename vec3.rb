@@ -55,6 +55,21 @@ Vec3 = Struct.new(:x, :y, :z) do
     v / v.length
   end
 
+  def self.random(min = nil, max = nil)
+    if min && max
+      self.new(rand(min..max), rand(min..max), rand(min..max))
+    else
+      self.new(rand, rand, rand)
+    end
+  end
+
+  def self.random_in_unit_sphere
+    loop do
+      p = Vec3.random(-1, 1)
+      return p if p.length_squared < 1
+    end
+  end
+
   def to_s
     "#{x} #{y} #{z}"
   end
