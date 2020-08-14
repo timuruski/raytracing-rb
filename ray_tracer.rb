@@ -34,18 +34,18 @@ end
 
 def ppm(width, height)
   # Clear before printing status output
-  # $stderr.print "\e[0;0H\e[K\e[0m"
   $stderr.print "\e[2J"
 
   # PPM header
   $stdout.puts "P3\n#{width} #{height}\n255"
 
   (height - 1).downto(0) do |j|
-    $stderr.print "\e[0;0HScanlines remaining: #{j}\e[K"
-    $stderr.flush
-
     0.upto(width - 1) do |i|
+      start_time = Time.now
       $stdout.puts yield i, j
+
+      $stderr.print progress(width, height, i, j, start_time)
+      $stderr.flush
     end
   end
 end
@@ -64,10 +64,20 @@ def ray_color(r, world, depth)
   end
 end
 
+def progress(width, height, i, j, start_time)
+  total = (height * width)
+  complete = (j * width + i)
+  percent = 100.0 - (complete.to_f / total.to_f * 100)
+
+  remaining = (Time.now - start_time) * (total - complete)
+
+  "\e[0;0H⏳ Rendering #{"%4.2f" % percent}%, estimated remaining: #{"%4d" % remaining} sec...\e[K"
+end
+
 def duration(start_time, finish_time = Time.now)
-  diff = finish_time - start_time
+  diff = (finish_time.to_i - start_time.to_i)
   min, rest = diff.divmod(60)
-  sec, _ = rest.divmod(60)
+  sec, _ = rest.divmod(1)
 
   "#{min} min, #{sec} sec"
 end
