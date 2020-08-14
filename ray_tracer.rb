@@ -6,9 +6,11 @@ ASPECT_RATIO = 16.0 / 9.0
 IMAGE_WIDTH = 400
 IMAGE_HEIGHT = (IMAGE_WIDTH / ASPECT_RATIO).to_i
 SAMPLES_PER_PIXEL = 20 # 100 samples takes ~2 minutes
-MAX_DEPTH = 50
+MAX_DEPTH = 10 # 50 Takes a long time
 
 at_exit do
+  start_time = Time.now
+
   world = HittableList.new
   world.push Sphere.new(Point3.new(0,0,-1), 0.5)
   world.push Sphere.new(Point3.new(0,-100.5,-1), 100)
@@ -26,6 +28,8 @@ at_exit do
 
     pixel_color.to_s(SAMPLES_PER_PIXEL)
   end
+
+  $stderr.print "\e[0;0H✨ Finished in #{duration(start_time)}!\e[K\n"
 end
 
 def ppm(width, height)
@@ -37,7 +41,6 @@ def ppm(width, height)
   $stdout.puts "P3\n#{width} #{height}\n255"
 
   (height - 1).downto(0) do |j|
-    $stderr.print "\e[0;0H"
     $stderr.print "\e[0;0HScanlines remaining: #{j}\e[K"
     $stderr.flush
 
@@ -45,8 +48,6 @@ def ppm(width, height)
       $stdout.puts yield i, j
     end
   end
-
-  $stderr.print "\e[0;0H\e[KDone!\n"
 end
 
 def ray_color(r, world, depth)
@@ -61,4 +62,12 @@ def ray_color(r, world, depth)
     t = 0.5 * (unit_direction.y + 1.0)
     (1.0 - t) * Color.new(1.0, 1.0, 1.0) + t * Color.new(0.5, 0.7, 1.0)
   end
+end
+
+def duration(start_time, finish_time = Time.now)
+  diff = finish_time - start_time
+  min, rest = diff.divmod(60)
+  sec, _ = rest.divmod(60)
+
+  "#{min} min, #{sec} sec"
 end
