@@ -65,7 +65,7 @@ Vec3 = Struct.new(:x, :y, :z) do
 
   def self.random_in_unit_sphere
     loop do
-      p = Vec3.random(-1, 1)
+      p = Vec3.random(-1.0, 1.0)
       return p if p.length_squared < 1
     end
   end
