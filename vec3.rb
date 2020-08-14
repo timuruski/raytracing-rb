@@ -73,6 +73,10 @@ Color = Class.new(Vec3) do
   end
 end
 
+def Color(v)
+  Color.new(v.x, v.y, v.z)
+end
+
 # Commutative multiply and divide for sclars and vectors.
 module Vec3Math
   def *(other)
