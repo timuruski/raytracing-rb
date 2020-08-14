@@ -63,6 +63,19 @@ Vec3 = Struct.new(:x, :y, :z) do
     end
   end
 
+  def self.random_unit_vector
+    a = rand(0.0..(2 * Math::PI))
+    z = rand(-1.0..1.0)
+    r = Math.sqrt(1 - z * z)
+
+    Vec3.new(r * Math.cos(a), r * Math.sin(a), z)
+  end
+
+  def self.random_in_hemisphere(normal)
+    in_unit_sphere = random_in_unit_sphere
+    dot(in_unit_sphere, normal) > 0.0 ? in_unit_sphere : -in_unit_sphere
+  end
+
   def self.random_in_unit_sphere
     loop do
       p = Vec3.random(-1.0, 1.0)

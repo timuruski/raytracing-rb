@@ -55,7 +55,7 @@ def ray_color(r, world, depth)
   return Color.new(0,0,0) if depth <= 0
 
   if world.hit(r, 0.001, Float::INFINITY, rec)
-    target = rec.p + rec.normal + Vec3.random_in_unit_sphere
+    target = rec.p + rec.normal + Vec3.random_unit_vector
     0.5 * ray_color(Ray.new(rec.p, target - rec.p), world, depth - 1)
   else
     unit_direction = Vec3.unit(r.direction)
