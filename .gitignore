@@ -1,1 +1,3 @@
+*.png
+!renders/*.png
 *.ppm
