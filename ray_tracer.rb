@@ -5,15 +5,22 @@ require_relative "core"
 ASPECT_RATIO = 16.0 / 9.0
 IMAGE_WIDTH = 400
 IMAGE_HEIGHT = (IMAGE_WIDTH / ASPECT_RATIO).to_i
-SAMPLES_PER_PIXEL = (ENV["SAMPLES"] || 10).to_i # 100 samples takes ~2 minutes
-MAX_DEPTH = (ENV["DEPTH"] || 10).to_i # 50 Takes a long time
+SAMPLES_PER_PIXEL = (ENV["SAMPLES"] || 3).to_i # 100 samples takes ~2 minutes
+MAX_DEPTH = (ENV["DEPTH"] || 5).to_i # 50 Takes a long time
 
 at_exit do
   start_time = Time.now
 
+  material_ground = Lambertian.new(Color.new(0.8, 0.8, 0.0))
+  material_center = Lambertian.new(Color.new(0.7, 0.3, 0.3))
+  material_left = Metal.new(Color.new(0.8, 0.8, 0.8), 0.3)
+  material_right = Metal.new(Color.new(0.8, 0.6, 0.2), 1.0)
+
   world = HittableList.new
-  world.push Sphere.new(Point3.new(0,0,-1), 0.5)
-  world.push Sphere.new(Point3.new(0,-100.5,-1), 100)
+  world.push Sphere.new(Point3.new(0.0, -100.5, -1.0), 100.0, material_ground)
+  world.push Sphere.new(Point3.new(0.0,    0.0, -1.0),   0.5, material_center)
+  world.push Sphere.new(Point3.new(-1.0,   0.0, -1.0),   0.5, material_left)
+  world.push Sphere.new(Point3.new( 1.0,   0.0, -1.0),   0.5, material_right)
 
   camera = Camera.new
 
@@ -32,13 +39,19 @@ at_exit do
   $stderr.print "\e[0;0H✨ Finished in #{duration(start_time)}!\e[K\n"
 end
 
-def ray_color(r, world, depth)
+def ray_color(r, world, depth, attentuation = Color.new)
   rec = Hittable::HitRecord.new
   return Color.new(0,0,0) if depth <= 0
 
   if world.hit(r, 0.001, Float::INFINITY, rec)
-    target = rec.p + rec.normal + Vec3.random_unit_vector
-    0.5 * ray_color(Ray.new(rec.p, target - rec.p), world, depth - 1)
+    scattered = Ray.new
+
+    scattered, attenuation, did_scatter = rec.material.scatter(r, rec, attenuation, scattered)
+    if did_scatter
+      attenuation * ray_color(scattered, world, depth - 1, attentuation)
+    else
+      Color.new(0,0,0)
+    end
   else
     unit_direction = Vec3.unit(r.direction)
     t = 0.5 * (unit_direction.y + 1.0)

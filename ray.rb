@@ -3,7 +3,7 @@ require_relative "vec3"
 class Ray
   attr_reader :origin, :direction
 
-  def initialize(origin, direction)
+  def initialize(origin = Point3.new, direction = Vec3.new)
     @origin = origin
     @direction = direction
   end

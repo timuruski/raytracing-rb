@@ -1,6 +1,7 @@
 require_relative "camera"
 require_relative "color"
 require_relative "hittable_list"
+require_relative "material"
 require_relative "ray"
 require_relative "sphere"
 require_relative "vec3"

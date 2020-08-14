@@ -37,6 +37,15 @@ Vec3 = Struct.new(:x, :y, :z) do
     x**2 + y**2 + z**2
   end
 
+  # NOTE No pointers in Ruby, so this might be a way to fake them, very badly.
+  def replace(c)
+    self.x = c.x
+    self.y = c.y
+    self.z = c.z
+
+    self
+  end
+
   def self.dot(u, v)
     raise TypeError unless u.is_a?(Vec3) && v.is_a?(Vec3)
 
@@ -81,6 +90,10 @@ Vec3 = Struct.new(:x, :y, :z) do
       p = Vec3.random(-1.0, 1.0)
       return p if p.length_squared < 1
     end
+  end
+
+  def self.reflect(v, n)
+    v - 2 * dot(v, n) * n
   end
 
   def to_s

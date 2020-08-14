@@ -3,11 +3,12 @@ require_relative "vec3"
 
 class Sphere
   include Hittable
-  attr_reader :center, :radius
+  attr_reader :center, :radius, :material
 
-  def initialize(center, radius)
+  def initialize(center, radius, material)
     @center = center
     @radius = radius
+    @material = material
   end
 
   def hit(r, t_min, t_max, rec)
@@ -25,6 +26,7 @@ class Sphere
         rec.p = r.at(rec.t)
         outward_normal = (rec.p - center) / radius
         rec.set_face_normal(r, outward_normal)
+        rec.material = material
 
         return true
       end
@@ -35,6 +37,7 @@ class Sphere
         rec.p = r.at(rec.t)
         outward_normal = (rec.p - center) / radius
         rec.set_face_normal(r, outward_normal)
+        rec.material = material
 
         return true
       end

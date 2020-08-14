@@ -1,11 +1,11 @@
 require_relative "vec3"
 
 module Hittable
-  HitRecord = Struct.new(:p, :normal, :t) do
+  HitRecord = Struct.new(:p, :normal, :t, :material) do
     attr_reader :front_face
 
-    def initialize(p = Point3.new, normal = Vec3.new, t = 0.0)
-      super(p, normal, t)
+    def initialize(p = Point3.new, normal = Vec3.new, t = 0.0, material = nil)
+      super(p, normal, t, material)
     end
 
     def set_face_normal(r, outward_normal)
