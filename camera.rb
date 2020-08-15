@@ -5,19 +5,25 @@ class Camera
   attr_accessor :aspect_ratio, :focal_length, :viewport_height, :viewport_width
   attr_accessor :origin, :horizontal, :vertical, :lower_left_corner
 
-  def initialize
-    self.aspect_ratio = 16.0 / 9.0
-    self.viewport_height = 2.0
-    self.viewport_width = aspect_ratio * viewport_height
-    self.focal_length = 1.0
+  def initialize(look_from, look_at, vup, vfov, aspect_ratio)
+    theta = vfov * Math::PI / 180.0
+    h = Math.tan(theta / 2)
 
-    self.origin = Point3.new(0,0,0)
-    self.horizontal = Vec3.new(viewport_width,0,0)
-    self.vertical = Vec3.new(0,viewport_height,0)
-    self.lower_left_corner = origin - (horizontal / 2) - (vertical / 2) - Vec3.new(0, 0, focal_length)
+    self.aspect_ratio = aspect_ratio
+    self.viewport_height = 2.0 * h
+    self.viewport_width = aspect_ratio * viewport_height
+
+    w = Vec3.unit(look_from - look_at)
+    u = Vec3.unit(Vec3.cross(vup, w))
+    v = Vec3.cross(w, u)
+
+    self.origin = look_from
+    self.horizontal = viewport_width * u
+    self.vertical = viewport_height * v
+    self.lower_left_corner = origin - (horizontal / 2) - (vertical / 2) - w
   end
 
-  def get_ray(u, v)
-    Ray.new(origin, lower_left_corner + (u * horizontal) + (v * vertical) - origin)
+  def get_ray(s, t)
+    Ray.new(origin, lower_left_corner + (s * horizontal) + (t * vertical) - origin)
   end
 end

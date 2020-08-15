@@ -11,19 +11,21 @@ MAX_DEPTH = (ENV["DEPTH"] || 10).to_i # 50 Takes a long time
 at_exit do
   start_time = Time.now
 
+  r = Math.cos(Math::PI / 4)
+  world = HittableList.new
+
   material_ground = Lambertian.new(Color.new(0.8, 0.8, 0.0))
   material_center = Lambertian.new(Color.new(0.1, 0.2, 0.5))
   material_left = Dielectric.new(1.5)
-  material_right = Metal.new(Color.new(0.8, 0.6, 0.2), 1.0)
+  material_right = Metal.new(Color.new(0.8, 0.6, 0.2), 0.0)
 
-  world = HittableList.new
-  world.push Sphere.new(Point3.new(0.0, -100.5, -1.0), 100.0, material_ground)
-  world.push Sphere.new(Point3.new(0.0,    0.0, -1.0),   0.5, material_center)
-  world.push Sphere.new(Point3.new(-1.0,   0.0, -1.0),   0.5, material_left)
-  world.push Sphere.new(Point3.new(-1.0,   0.0, -1.0),  -0.4, material_left)
-  world.push Sphere.new(Point3.new( 1.0,   0.0, -1.0),   0.5, material_right)
+  world.push Sphere.new(Point3.new( 0.0, -100.5, -1.0), 100.0, material_ground)
+  world.push Sphere.new(Point3.new( 0.0,    0.0, -1.0),   0.5, material_center)
+  world.push Sphere.new(Point3.new(-1.0,    0.0, -1.0),   0.5, material_left)
+  world.push Sphere.new(Point3.new(-1.0,    0.0, -1.0), -0.45, material_left)
+  world.push Sphere.new(Point3.new( 1.0,    0.0, -1.0),   0.5, material_right)
 
-  camera = Camera.new
+  camera = Camera.new(Point3.new(-2, 2, 1), Point3.new(0,0,-1), Vec3.new(0,1,0), 20.0, ASPECT_RATIO)
 
   Renderer.new(IMAGE_WIDTH, IMAGE_HEIGHT).ppm do |i, j|
     pixel_color = Color.new(0,0,0)
