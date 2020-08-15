@@ -25,7 +25,12 @@ at_exit do
   world.push Sphere.new(Point3.new(-1.0,    0.0, -1.0), -0.45, material_left)
   world.push Sphere.new(Point3.new( 1.0,    0.0, -1.0),   0.5, material_right)
 
-  camera = Camera.new(Point3.new(-2, 2, 1), Point3.new(0,0,-1), Vec3.new(0,1,0), 20.0, ASPECT_RATIO)
+  look_from = Point3.new(3,3,2)
+  look_at = Point3.new(0,0,-1)
+  vup = Vec3.new(0,1,0)
+  dist_to_focus = (look_from - look_at).length
+  aperture = 2.0
+  camera = Camera.new(look_from, look_at, vup, 20.0, ASPECT_RATIO, aperture, dist_to_focus)
 
   Renderer.new(IMAGE_WIDTH, IMAGE_HEIGHT).ppm do |i, j|
     pixel_color = Color.new(0,0,0)

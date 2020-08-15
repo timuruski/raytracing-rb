@@ -92,6 +92,13 @@ Vec3 = Struct.new(:x, :y, :z) do
     end
   end
 
+  def self.random_in_unit_disk
+    loop do
+      p = Vec3.new(rand(-1.0..1.0), rand(-1.0..1.0), 0)
+      return p if p.length_squared < 1
+    end
+  end
+
   def self.reflect(v, n)
     v - 2 * dot(v, n) * n
   end
