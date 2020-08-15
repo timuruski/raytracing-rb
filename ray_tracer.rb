@@ -2,34 +2,22 @@
 
 require_relative "core"
 
-ASPECT_RATIO = 16.0 / 9.0
+ASPECT_RATIO = 3.0 / 2.0
 IMAGE_WIDTH = 400
 IMAGE_HEIGHT = (IMAGE_WIDTH / ASPECT_RATIO).to_i
-SAMPLES_PER_PIXEL = (ENV["SAMPLES"] || 5).to_i # 100 samples takes ~2 minutes
-MAX_DEPTH = (ENV["DEPTH"] || 10).to_i # 50 Takes a long time
+SAMPLES_PER_PIXEL = (ENV["SAMPLES"] || 1).to_i # 100 samples takes ~2 minutes
+MAX_DEPTH = 50
 
 at_exit do
   start_time = Time.now
 
-  r = Math.cos(Math::PI / 4)
-  world = HittableList.new
+  world = random_scene
 
-  material_ground = Lambertian.new(Color.new(0.8, 0.8, 0.0))
-  material_center = Lambertian.new(Color.new(0.1, 0.2, 0.5))
-  material_left = Dielectric.new(1.5)
-  material_right = Metal.new(Color.new(0.8, 0.6, 0.2), 0.0)
-
-  world.push Sphere.new(Point3.new( 0.0, -100.5, -1.0), 100.0, material_ground)
-  world.push Sphere.new(Point3.new( 0.0,    0.0, -1.0),   0.5, material_center)
-  world.push Sphere.new(Point3.new(-1.0,    0.0, -1.0),   0.5, material_left)
-  world.push Sphere.new(Point3.new(-1.0,    0.0, -1.0), -0.45, material_left)
-  world.push Sphere.new(Point3.new( 1.0,    0.0, -1.0),   0.5, material_right)
-
-  look_from = Point3.new(3,3,2)
-  look_at = Point3.new(0,0,-1)
+  look_from = Point3.new(13,2,3)
+  look_at = Point3.new(0,0,0)
   vup = Vec3.new(0,1,0)
-  dist_to_focus = (look_from - look_at).length
-  aperture = 2.0
+  dist_to_focus = 10.0
+  aperture = 0.1
   camera = Camera.new(look_from, look_at, vup, 20.0, ASPECT_RATIO, aperture, dist_to_focus)
 
   Renderer.new(IMAGE_WIDTH, IMAGE_HEIGHT).ppm do |i, j|
@@ -45,6 +33,23 @@ at_exit do
   end
 
   $stderr.print "\e[0;0H✨ Finished in #{duration(start_time)}!\e[K\n"
+end
+
+def random_scene
+  world = HittableList.new
+
+  material_ground = Lambertian.new(Color.new(0.8, 0.8, 0.0))
+  material_center = Lambertian.new(Color.new(0.1, 0.2, 0.5))
+  material_left = Dielectric.new(1.5)
+  material_right = Metal.new(Color.new(0.8, 0.6, 0.2), 0.0)
+
+  world.push Sphere.new(Point3.new( 0.0, -100.5, -1.0), 100.0, material_ground)
+  world.push Sphere.new(Point3.new( 0.0,    0.0, -1.0),   0.5, material_center)
+  world.push Sphere.new(Point3.new(-1.0,    0.0, -1.0),   0.5, material_left)
+  world.push Sphere.new(Point3.new(-1.0,    0.0, -1.0), -0.45, material_left)
+  world.push Sphere.new(Point3.new( 1.0,    0.0, -1.0),   0.5, material_right)
+
+  world
 end
 
 def ray_color(r, world, depth, attentuation = Color.new)
