@@ -5,8 +5,8 @@ require_relative "core"
 ASPECT_RATIO = 16.0 / 9.0
 IMAGE_WIDTH = 400
 IMAGE_HEIGHT = (IMAGE_WIDTH / ASPECT_RATIO).to_i
-SAMPLES_PER_PIXEL = (ENV["SAMPLES"] || 3).to_i # 100 samples takes ~2 minutes
-MAX_DEPTH = (ENV["DEPTH"] || 5).to_i # 50 Takes a long time
+SAMPLES_PER_PIXEL = (ENV["SAMPLES"] || 5).to_i # 100 samples takes ~2 minutes
+MAX_DEPTH = (ENV["DEPTH"] || 10).to_i # 50 Takes a long time
 
 at_exit do
   start_time = Time.now
@@ -20,6 +20,7 @@ at_exit do
   world.push Sphere.new(Point3.new(0.0, -100.5, -1.0), 100.0, material_ground)
   world.push Sphere.new(Point3.new(0.0,    0.0, -1.0),   0.5, material_center)
   world.push Sphere.new(Point3.new(-1.0,   0.0, -1.0),   0.5, material_left)
+  world.push Sphere.new(Point3.new(-1.0,   0.0, -1.0),  -0.4, material_left)
   world.push Sphere.new(Point3.new( 1.0,   0.0, -1.0),   0.5, material_right)
 
   camera = Camera.new

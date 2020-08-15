@@ -63,11 +63,20 @@ class Dielectric
     if(etai_over_etat * sin_theta > 1.0)
       reflected = Vec3.reflect(unit_direction, rec.normal)
       scattered = Ray.new(rec.p, reflected)
+    elsif rand < schlick(cos_theta, etai_over_etat)
+      reflected = Vec3.reflect(unit_direction, rec.normal)
+      scattered = Ray.new(rec.p, reflected)
     else
       refracted = Vec3.refract(unit_direction, rec.normal, etai_over_etat)
       scattered = Ray.new(rec.p, refracted)
     end
 
     [scattered, attenuation, true]
+  end
+
+  def schlick(cosine, ref_idx)
+    r0 = (1.0 - ref_idx) / (1.0 + ref_idx)
+    r0 = r0 * r0
+    r0 + (1.0 - r0) * (1.0 - cosine) ** 5.0
   end
 end
