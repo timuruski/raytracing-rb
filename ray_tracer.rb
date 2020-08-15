@@ -3,7 +3,7 @@
 require_relative "core"
 
 ASPECT_RATIO = 3.0 / 2.0
-IMAGE_WIDTH = 400
+IMAGE_WIDTH = 1200
 IMAGE_HEIGHT = (IMAGE_WIDTH / ASPECT_RATIO).to_i
 SAMPLES_PER_PIXEL = (ENV["SAMPLES"] || 1).to_i # 100 samples takes ~2 minutes
 MAX_DEPTH = 50
@@ -38,16 +38,43 @@ end
 def random_scene
   world = HittableList.new
 
-  material_ground = Lambertian.new(Color.new(0.8, 0.8, 0.0))
-  material_center = Lambertian.new(Color.new(0.1, 0.2, 0.5))
-  material_left = Dielectric.new(1.5)
-  material_right = Metal.new(Color.new(0.8, 0.6, 0.2), 0.0)
+  ground_material = Lambertian.new(Color.new(0.5, 0.5, 0.5))
+  world.push Sphere.new(Point3.new(0,-1000,0), 1000.0, ground_material)
 
-  world.push Sphere.new(Point3.new( 0.0, -100.5, -1.0), 100.0, material_ground)
-  world.push Sphere.new(Point3.new( 0.0,    0.0, -1.0),   0.5, material_center)
-  world.push Sphere.new(Point3.new(-1.0,    0.0, -1.0),   0.5, material_left)
-  world.push Sphere.new(Point3.new(-1.0,    0.0, -1.0), -0.45, material_left)
-  world.push Sphere.new(Point3.new( 1.0,    0.0, -1.0),   0.5, material_right)
+  -11.upto(10) do |a|
+    -11.upto(10) do |b|
+      choose_mat = rand
+      center = Point3.new(a + 0.8 * rand, 0.2, b + 0.9 * rand)
+
+      if (center - Point3.new(4, 0.2, 0)).length > 0.9
+        if choose_mat < 0.8
+          # diffuse
+          albedo = Color.random * Color.random
+          sphere_material = Lambertian.new(albedo)
+          world.push Sphere.new(center, 0.2, sphere_material)
+        elsif choose_mat < 0.95
+          # metallic
+          albedo = Color.random(0.5, 1)
+          fuzz = rand(0.0..0.5)
+          sphere_material = Metal.new(albedo, fuzz)
+          world.push Sphere.new(center, 0.2, sphere_material)
+        else
+          # glass
+          sphere_material = Dielectric.new(1.5)
+          world.push Sphere.new(center, 0.2, sphere_material)
+        end
+      end
+    end
+  end
+
+  material1 = Dielectric.new(1.5)
+  world.push Sphere.new(Point3.new(0,1,0), 1.0, material1)
+
+  material2 = Lambertian.new(Color.new(0.4,0.2,0.1))
+  world.push Sphere.new(Point3.new(-4,1,0), 1.0, material2)
+
+  material3 = Metal.new(Color.new(0.7,0.6,0.5), 0.0)
+  world.push Sphere.new(Point3.new(4,1,0), 1.0, material3)
 
   world
 end
