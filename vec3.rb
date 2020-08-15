@@ -96,6 +96,13 @@ Vec3 = Struct.new(:x, :y, :z) do
     v - 2 * dot(v, n) * n
   end
 
+  def self.refract(uv, n, etai_over_etat)
+    cos_theta = dot(-uv, n)
+    r_out_perp = etai_over_etat * (uv + cos_theta * n)
+    r_out_parallel = -Math.sqrt((1.0 - r_out_perp.length_squared()).abs) * n
+    r_out_perp + r_out_parallel
+  end
+
   def to_s
     "#{x} #{y} #{z}"
   end

@@ -12,8 +12,8 @@ at_exit do
   start_time = Time.now
 
   material_ground = Lambertian.new(Color.new(0.8, 0.8, 0.0))
-  material_center = Lambertian.new(Color.new(0.7, 0.3, 0.3))
-  material_left = Metal.new(Color.new(0.8, 0.8, 0.8), 0.3)
+  material_center = Lambertian.new(Color.new(0.1, 0.2, 0.5))
+  material_left = Dielectric.new(1.5)
   material_right = Metal.new(Color.new(0.8, 0.6, 0.2), 1.0)
 
   world = HittableList.new
