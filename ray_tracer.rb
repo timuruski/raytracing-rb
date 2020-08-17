@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+require "parallel"
 require_relative "core"
 
 ASPECT_RATIO = 16.0 / 9.0
@@ -120,7 +121,7 @@ class Renderer
   end
 
   def ppm
-    pixels = (width * height).times.map do |n|
+    pixels = Parallel.map((width * height).times.to_a) do |n|
       i = n % width
       j = height - (n / width).ceil - 1
 
